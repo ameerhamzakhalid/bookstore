@@ -1,13 +1,9 @@
 import React from 'react';
-import Nav from './components/Nav';
 
-function CategoriesPage() {
-  return (
-    <>
-      <Nav />
-      <div>CategoriesPage</div>
-    </>
-  );
-}
+const CategoriesPage = () => (
+  <main>
+    <button type="button">Check status</button>
+  </main>
+);
 
 export default CategoriesPage;
