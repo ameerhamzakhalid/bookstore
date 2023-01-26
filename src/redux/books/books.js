@@ -1,79 +1,38 @@
-import axios from 'axios';
-import { deleteBook, bookEndPoint } from '../../components/API';
+import types from '../types/types';
+// initial state
+const initialState = {
+  numberOfBooks: '4',
+  books: [
 
-// Actions
-const Actions = {
-  ADD: 'bookstore/book/ADD',
-  REMOVE: 'bookstore/book/REMOVE',
-  LOAD: 'bookstore/book/LOAD',
+    { id: '01', title: 'In Search of Lost Time', author: 'Marcel Proust' },
+    { id: '02', title: 'One Hundred Years of Solitude', author: 'Gabriel Garcia Marquez' },
+    { id: '03', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald' },
+    { id: '04', title: 'The Art of War', author: 'Sun Tzu' },
+  ],
 };
-// state initialized as array
+// Actions Creators
+export const addingBook = (addedBook) => ({ type: types.ADDED_BOOK, addedBook });
 
-const initialState = [];
+export const removingBook = (id) => ({ type: types.REMOVED_BOOK, id });
 
-// Reducer
-const reducer = (state = initialState, action) => {
-  const { payLoad } = action;
+// Reducers Creator
+const booksReducer = (state = initialState, action) => {
   switch (action.type) {
-    case Actions.ADD:
-      return [...state, payLoad.book];
-
-    case Actions.LOAD:
-      return [...payLoad];
-
-    case Actions.REMOVE:
-      return state.filter((book) => book.item_id !== payLoad.id);
-
+    case types.ADDED_BOOK:
+      return {
+        ...state,
+        numberOfBooks: state.numberOfBooks + 1,
+        books: [...state.books, action.addedBook],
+      };
+    case types.REMOVED_BOOK:
+      return {
+        numberOfBooks: state.numberOfBooks - 1,
+        ...state,
+        books: [...state.books.filter((book) => book.id !== action.id)],
+      };
     default:
       return state;
   }
 };
 
-// The Action   Creators
-export const booksFromAPI = () => async (dispatch) => {
-  const response = await axios.get(bookEndPoint());
-  if (response.status === 200) {
-    const payLoad = Object.keys(response.data).map((valu) => ({
-      item_id: valu,
-      ...response.data[valu][0],
-    }));
-
-    dispatch({
-      type: Actions.LOAD,
-      payLoad,
-    });
-  }
-};
-
-export const AddBook = (book) => async (dispatch) => {
-  try {
-    const response = await axios.post(bookEndPoint(), book);
-    if (response.status === 201) {
-      return dispatch({
-        type: Actions.ADD,
-        payLoad: { book },
-      });
-    }
-
-    throw new Error();
-  } catch (error) {
-    return 'Book save was unsuccessful';
-  }
-};
-
-export const RemoveBook = (id) => async (dispatch) => {
-  try {
-    const response = await axios.delete(deleteBook(id));
-    if (response.status === 201) {
-      return dispatch({
-        type: Actions.REMOVE,
-        payLoad: { id },
-      });
-    }
-    throw new Error();
-  } catch (error) {
-    return 'Book not deleted';
-  }
-};
-
-export default reducer;
+export default booksReducer;
