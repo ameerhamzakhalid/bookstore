@@ -1,20 +1,24 @@
-// Actions
-const Actions = [
-  { CHECK: 'bookstore/categories/CHECK' },
-];
+import types from '../types/types';
 
-// Action Creator
+// initial state
+const initialState = {
+  categories: [],
+};
+// Actions Creators
+export const checkStatus = () => ({
+  type: types.BOOK_STATUS_CHECK,
+});
 
-const reducer = (state = [], action) => {
+const CategoriesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case Actions[0].CHECK:
-      return 'Under Construction';
+    case types.BOOK_STATUS_CHECK:
+      return {
+        ...state,
+        categories: [...state.categories, 'Under Construction'],
+      };
     default:
       return state;
   }
 };
 
-// Creator
-export const Category = () => ({ type: Actions[0].CHECK });
-
-export default reducer;
+export default CategoriesReducer;
